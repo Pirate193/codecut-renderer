@@ -52,12 +52,7 @@ COPY src ./src
 # Build the TypeScript code
 RUN npm run build
 
-# Expose port
-EXPOSE 4000
 
-# Health check for Railway
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD curl -f http://localhost:4000/health || exit 1
 
 # Start the server
 CMD ["npm", "run", "start"]

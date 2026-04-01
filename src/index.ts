@@ -67,7 +67,7 @@ app.onError((err,c)=>{
   return c.json({ error: "Internal server error" }, 500);
 })
 
-const port = 4000;
+const port = Number(process.env.PORT ?? 4000);
 
 serve({fetch:app.fetch,port},(info)=>{
    console.log(`Render service listening on :${info.port}`)
