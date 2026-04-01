@@ -3,15 +3,16 @@ import { Hono } from 'hono'
 import { RenderFailure, RenderRequestSchema, RenderResponse, RenderSuccess } from './types';
 import { renderProject } from './renderer';
 import "dotenv/config";
+
 const app = new Hono()
 
 app.use("/render",async(c,next)=>{
     const secret = process.env.RENDER_SECRET;
     if(!secret) return next();
     const supplied = c.req.header("x-render-secret");
-    // if(supplied!== secret){
-    //     return c.json({error:"Unauthorized"},401)
-    // }
+    if(supplied!== secret){
+        return c.json({error:"Unauthorized"},401)
+    }
     return next();
 })
 
@@ -34,12 +35,12 @@ app.post("/render",async(c)=>{
         };
         return c.json(failure satisfies RenderResponse, 400);
     }
-    const {projectId,scenes,fps,width,height,audio}=parsed.data;
+    const {projectId,projectTitle,scenes,fps,width,height,audio}=parsed.data;
     console.log(`[server] Render request received: projectId=${projectId} scenes=${scenes.length}`);
 
     try {
 
-        const {renderUrl,totalFrames,durationMs}= await renderProject(projectId,scenes,fps,width,height,audio);
+        const {renderUrl,totalFrames,durationMs}= await renderProject(projectId,projectTitle,scenes,fps,width,height,audio);
 
         const success:RenderSuccess={
             success:true,

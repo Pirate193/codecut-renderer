@@ -18,6 +18,7 @@ export const SceneDataSchema = z.object({
 
 export const RenderRequestSchema = z.object({
     projectId:z.string().min(1),
+    projectTitle:z.string().min(1),
     scenes:z.array(SceneDataSchema).min(1).max(100),
     fps: z.number().int().refine((v)=>[24,30,60].includes(v),{
         message:"fps must be 24,30 or 60"

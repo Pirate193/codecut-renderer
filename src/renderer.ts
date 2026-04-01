@@ -39,6 +39,7 @@ function sanitizeProjectId(id: string): string {
 
 export async function renderProject(
     projectId:string,
+    projectTitle:string,
     scenes:SceneData[],
     fps:number,
     width:number,
@@ -56,7 +57,7 @@ export async function renderProject(
     const safeId= sanitizeProjectId(projectId);
     const workDir = await fs.mkdtemp(path.join(os.tmpdir(),`codecut-${safeId}`));
 
-    console.log(`[render] START project=${safeId} scenes=${ordered.length} frames=${totalFrames} ${width}x${height} @ ${fps}`)
+    console.log(`[render] START project=${safeId} scenes=${ordered.length} frames=${totalFrames} ${width}x${height} @ ${fps} at ${startedAt}`);
 
     if(audio?.musicTrackUrl) console.log(`[render] Music: ${audio.musicTrackUrl}`);
     if(audio?.voiceoverUrl) console.log(`[render] voiceover:${audio.voiceoverUrl}`);
@@ -128,7 +129,7 @@ export async function renderProject(
         console.log(`[render] Render complete.Size :${(stat.size/1024/1024).toFixed(1)}MB`);
         //now we upload to r2
 
-        const key = `renders/${safeId}/${Date.now()}.mp4`;
+        const key = `${projectTitle}/${Date.now()}.mp4`;
         console.log(`[render] uploading to R2:${key}`);
 
         await getR2Client().send(new PutObjectCommand({
