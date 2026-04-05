@@ -106,12 +106,18 @@ export async function renderProject(
         }) 
         const outputPath = path.join(workDir,"output.mp4");
         console.log(`[render] Rendering ${totalFrames} frames ...`);
-        const onProgressHandler:RenderMediaOnProgress= ({progress})=>{
-            if(progress % 30 === 0 || progress === totalFrames){
-                const pct = Math.round((progress/totalFrames)*100);
-                console.log(`[render] ${progress}/${totalFrames} (${pct}%)`);
+        let lastLoggedPercent = -1;
+
+        const onProgressHandler: RenderMediaOnProgress = ({ progress }) => {
+          const renderedFrames = Math.round(progress * totalFrames);
+          const pct = Math.min(100, Math.round(progress * 100));
+
+           if (pct >= lastLoggedPercent + 5 || pct === 100) {
+              lastLoggedPercent = pct;
+                console.log(`[render] ${renderedFrames}/${totalFrames} (${pct}%)`);
             }
-            onProgress?.(Math.round(progress * totalFrames),totalFrames);
+
+            onProgress?.(renderedFrames, totalFrames);
         };
 
         await renderMedia({
@@ -121,6 +127,7 @@ export async function renderProject(
             outputLocation:outputPath,
             inputProps:{},
             chromiumOptions:{
+                gl:"angle",
                 disableWebSecurity:true
             },
             onProgress:onProgressHandler

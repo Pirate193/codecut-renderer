@@ -67,9 +67,19 @@ function validateSceneCode(code:string):void {
         //block unauthorised import
         ImportDeclaration(path){
             const source = path.node.source.value;
-            if(!ALLOWED_IMPORTS.has(source)){
-                throw path.buildCodeFrameError(`
-                    Import "${source}" is not allowed.Only "react " and "remotion are permitted"`)
+            const isSafe = 
+              source === "react" || 
+              source === "remotion" || 
+              source.startsWith("@remotion/") || 
+              source === "three" ||
+              source === "@react-three/fiber" ||
+              source === "lottie-web" ||
+              source === "mapbox-gl"||
+              source === "types/mapbox-gl"||
+              source === "@turf/turf";
+            
+            if (!isSafe) {
+                throw path.buildCodeFrameError(`Import "${source}" is not allowed. Only React, Remotion, and approved utility libraries are permitted.`)
             }
         },
         //Block dynamic import() and require()/eval() calls
