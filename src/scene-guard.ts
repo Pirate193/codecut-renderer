@@ -11,8 +11,6 @@ const BLOCKED_IDENTIFIERS = new Set([
   "globalThis",
   "Function",
   "eval",
-  "fetch",
-  "XMLHttpRequest",
   "WebSocket",
   "__dirname",
   "__filename",
